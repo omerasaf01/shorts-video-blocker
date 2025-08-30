@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShortBlocker Test Sayfası</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .test-link:hover {
+            background: #5a6fd8;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚫 ShortBlocker Test Sayfası</h1>
+    
+    <div class="test-section">
+        <h2>YouTube Test Linkleri</h2>
+        <p>Bu linkler YouTube Shorts sayfalarına gider ve eklenti tarafından engellenmelidir:</p>
+        <a href="https://www.youtube.com/shorts/dQw4w9WgXcQ" class="test-link" target="_blank">YouTube Shorts Test</a>
+        <a href="https://youtube.com/shorts/dQw4w9WgXcQ" class="test-link" target="_blank">YouTube Shorts (www olmadan)</a>
+        
+        <div class="status success">
+            ✅ Eklenti aktifse bu linkler ana YouTube sayfasına yönlendirilmelidir.
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Instagram Test Linkleri</h2>
+        <p>Bu linkler Instagram Reels sayfalarına gider ve eklenti tarafından engellenmelidir:</p>
+        <a href="https://www.instagram.com/reels/Cx123456789/" class="test-link" target="_blank">Instagram Reels Test</a>
+        <a href="https://instagram.com/reels/Cx123456789/" class="test-link" target="_blank">Instagram Reels (www olmadan)</a>
+        
+        <div class="status success">
+            ✅ Eklenti aktifse bu linkler ana Instagram sayfasına yönlendirilmelidir.
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manuel Test Adımları</h2>
+        <ol>
+            <li>Chrome'da <code>chrome://extensions/</code> adresine gidin</li>
+            <li>Geliştirici modunu açın</li>
+            <li>"Paketlenmemiş öğe yükle" ile bu klasörü seçin</li>
+            <li>Eklenti yüklendikten sonra YouTube'a gidin</li>
+            <li>Shorts butonlarının gizlendiğini kontrol edin</li>
+            <li>Instagram'a gidin ve Reels butonlarının gizlendiğini kontrol edin</li>
+        </ol>
+        
+        <div class="status warning">
+            ⚠️ Not: YouTube ve Instagram'ın dinamik yapısı nedeniyle bazı butonlar geçici olarak görünebilir.
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Eklenti Durumu</h2>
+        <div id="extension-status">
+            <p>Eklenti durumu kontrol ediliyor...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Eklenti durumunu kontrol et
+        function checkExtensionStatus() {
+            const statusDiv = document.getElementById('extension-status');
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                statusDiv.innerHTML = '<div class="status success">✅ ShortBlocker eklentisi yüklü ve aktif!</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status warning">⚠️ ShortBlocker eklentisi yüklü değil veya aktif değil.</div>';
+            }
+        }
+        
+        // Sayfa yüklendiğinde kontrol et
+        document.addEventListener('DOMContentLoaded', checkExtensionStatus);
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShortBlocker</title>
+  <style>
+    body {
+      width: 320px;
+      min-height: 400px;
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      margin: 8px 0 0 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .settings-section {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .settings-section h3 {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .setting-label {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch.active {
+      background: #4CAF50;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(26px);
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .platform-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🚫 ShortBlocker</h1>
+    <p>YouTube Shorts ve Instagram Reels'i engelle</p>
+  </div>
+
+  <div class="settings-section">
+    <h3>YouTube Ayarları</h3>
+    <div class="setting-item">
+      <span class="setting-label">
+        <span class="platform-icon">📺</span>
+        Shorts sayfalarını engelle
+      </span>
+      <div class="toggle-switch" id="blockYouTubeShorts"></div>
+    </div>
+    <div class="setting-item">
+      <span class="setting-label">
+        <span class="platform-icon">🔘</span>
+        Shorts butonlarını kaldır
+      </span>
+      <div class="toggle-switch" id="removeShortsButtons"></div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Instagram Ayarları</h3>
+    <div class="setting-item">
+      <span class="setting-label">
+        <span class="platform-icon">📱</span>
+        Reels sayfalarını engelle
+      </span>
+      <div class="toggle-switch" id="blockInstagramReels"></div>
+    </div>
+    <div class="setting-item">
+      <span class="setting-label">
+        <span class="platform-icon">🔘</span>
+        Reels butonlarını kaldır
+      </span>
+      <div class="toggle-switch" id="removeReelsButtons"></div>
+    </div>
+  </div>
+
+  <div class="status" id="status">
+    Ayarlar yükleniyor...
+  </div>
+
+  <div class="footer">
+    ShortBlocker v1.0.0
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
