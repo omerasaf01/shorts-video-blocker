@@ -1,0 +1,61 @@
+name: Firefox Add-ons Yayınla
+
+on:
+  push:
+    tags:
+      - 'v*'          # v1.2.3 gibi bir tag push edildiğinde tetiklenir
+  workflow_dispatch:  # Elle de çalıştırılabilir
+    inputs:
+      version:
+        description: 'Yayınlanacak sürüm (örn: 1.2.3)'
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: web-ext kur
+        run: npm install -g web-ext
+
+      - name: Sürümü belirle
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            # tag adından "v" önekini kaldır (v1.2.3 → 1.2.3)
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: manifest.json sürümünü güncelle
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          # Firefox/manifest.json içindeki "version" alanını güncelle
+          jq --arg v "$VERSION" '.version = $v' Firefox/manifest.json > /tmp/manifest.json
+          mv /tmp/manifest.json Firefox/manifest.json
+          echo "Sürüm güncellendi: $VERSION"
+          cat Firefox/manifest.json | grep '"version"'
+
+      - name: Eklentiyi imzala ve mevcut AMO eklentisine yeni sürüm olarak yükle
+        run: |
+          web-ext sign \
+            --source-dir ./Firefox \
+            --channel listed \
+            --api-key    ${{ secrets.AMO_ISSUER }} \
+            --api-secret ${{ secrets.AMO_SECRET }}
+
+      - name: İmzalanmış .xpi dosyasını artifact olarak kaydet
+        uses: actions/upload-artifact@v4
+        with:
+          name: shortblocker-${{ steps.version.outputs.VERSION }}.xpi
+          path: web-ext-artifacts/*.xpi
+          if-no-files-found: warn

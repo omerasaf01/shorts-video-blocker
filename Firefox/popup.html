@@ -5,174 +5,439 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShortBlocker</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      width: 320px;
-      min-height: 400px;
-      margin: 0;
-      padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      background: #0d0d14;
+      color: #e8e8f0;
+      padding: 0 0 16px 0;
+      overflow-x: hidden;
     }
 
+    /* ── Header ── */
     .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .header p {
-      margin: 8px 0 0 0;
-      opacity: 0.9;
-      font-size: 14px;
-    }
-
-    .settings-section {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .settings-section h3 {
-      margin: 0 0 15px 0;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .setting-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .setting-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-
-    .setting-label {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .toggle-switch {
       position: relative;
-      width: 50px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.3);
+      padding: 20px 20px 16px;
+      background: linear-gradient(135deg, #6c3fd6 0%, #9b59f7 60%, #c471ed 100%);
+      overflow: hidden;
+    }
+    .header::before {
+      content: ''; position: absolute;
+      top: -40px; right: -40px;
+      width: 130px; height: 130px;
+      background: rgba(255,255,255,0.07); border-radius: 50%;
+    }
+    .header::after {
+      content: ''; position: absolute;
+      bottom: -50px; left: -30px;
+      width: 110px; height: 110px;
+      background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+    .header-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.15);
       border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .header-text h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+    .header-text p  { font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 2px; }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      display: flex;
+      background: #111119;
+      border-bottom: 1px solid #1e1e2d;
+      padding: 0 16px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #5a5a7a;
+      background: none;
+      border: none;
       cursor: pointer;
-      transition: background 0.3s ease;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      letter-spacing: 0.2px;
     }
-
-    .toggle-switch.active {
-      background: #4CAF50;
+    .tab-btn.active {
+      color: #a78bfa;
+      border-bottom-color: #7c3aed;
     }
+    .tab-btn:hover:not(.active) { color: #8080b0; }
 
+    /* ── Tab panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 0; }
+
+    /* ── Card ── */
+    .card {
+      background: #16161f;
+      border: 1px solid #232333;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid #1e1e2d;
+    }
+    .card-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .card-icon.yt { background: rgba(255,48,48,0.15); }
+    .card-icon.ig { background: rgba(214,100,255,0.15); }
+    .card-icon svg { width: 15px; height: 15px; }
+    .card-title { font-size: 13px; font-weight: 600; color: #c8c8e0; letter-spacing: 0.1px; }
+
+    /* ── Setting row ── */
+    .setting-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px;
+      transition: background 0.15s;
+    }
+    .setting-item:not(:last-child) { border-bottom: 1px solid #1a1a27; }
+    .setting-item:hover { background: #1c1c28; }
+    .setting-label {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 13px; font-weight: 500; color: #b0b0cc;
+    }
+    .label-dot { width: 6px; height: 6px; border-radius: 50%; background: #4040a0; flex-shrink: 0; }
+
+    /* ── Toggle ── */
+    .toggle-switch {
+      position: relative; width: 44px; height: 24px;
+      background: #2a2a3d; border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.25s cubic-bezier(.4,0,.2,1);
+      flex-shrink: 0; border: 1px solid #33334a;
+    }
+    .toggle-switch.active { background: #7c3aed; border-color: #7c3aed; }
     .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      content: ''; position: absolute;
+      top: 2px; left: 2px; width: 18px; height: 18px;
+      background: #6a6a8a; border-radius: 50%;
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), background 0.25s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
+    .toggle-switch.active::after { transform: translateX(20px); background: #fff; }
 
-    .toggle-switch.active::after {
-      transform: translateX(26px);
+    /* ── Status bar ── */
+    .status-bar {
+      padding: 10px 14px; border-radius: 10px;
+      background: #16161f; border: 1px solid #232333;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: #7878aa; font-weight: 500;
     }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #3a3a5a; flex-shrink: 0; transition: background 0.3s;
+    }
+    .status-dot.active  { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+    .status-dot.partial { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.5); }
+    #status { flex: 1; }
 
-    .status {
+    /* ───────────────────────────────────────
+       ── Pomodoro panel ──
+    ─────────────────────────────────────── */
+    .pomo-phase-label {
       text-align: center;
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      font-size: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #6060a0;
+    }
+    .pomo-phase-label.work  { color: #a78bfa; }
+    .pomo-phase-label.break { color: #34d399; }
+
+    /* Ring timer */
+    .pomo-ring-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin: 0 auto;
+      width: 160px; height: 160px;
+    }
+    .pomo-ring-wrap svg { position: absolute; top: 0; left: 0; }
+    #pomoRingBg  { stroke: #1e1e2d; }
+    #pomoRingFg  {
+      stroke: #7c3aed;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 80px 80px;
+      transition: stroke-dashoffset 1s linear, stroke 0.4s;
+    }
+    .pomo-ring-wrap.break #pomoRingFg { stroke: #34d399; }
+    .pomo-time-display {
+      position: relative; z-index: 1;
+      text-align: center;
+    }
+    .pomo-time {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #e8e8f0;
+      line-height: 1;
+    }
+    .pomo-time-sub {
+      font-size: 11px;
+      color: #5a5a7a;
+      margin-top: 4px;
       font-weight: 500;
     }
 
+    /* Controls */
+    .pomo-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .pomo-btn {
+      flex: 1;
+      max-width: 90px;
+      padding: 9px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .pomo-btn:active { transform: scale(0.96); }
+    .pomo-btn.primary {
+      background: #7c3aed;
+      color: #fff;
+    }
+    .pomo-btn.primary:hover { opacity: 0.88; }
+    .pomo-btn.primary.break-mode { background: #059669; }
+    .pomo-btn.secondary {
+      background: #1e1e2d;
+      color: #7070a0;
+      border: 1px solid #2a2a3d;
+    }
+    .pomo-btn.secondary:hover { background: #232333; color: #a0a0c8; }
+
+    /* Stats row */
+    .pomo-stats {
+      display: flex;
+      gap: 8px;
+    }
+    .pomo-stat {
+      flex: 1;
+      background: #16161f;
+      border: 1px solid #232333;
+      border-radius: 10px;
+      padding: 9px 10px;
+      text-align: center;
+    }
+    .pomo-stat-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #a78bfa;
+      line-height: 1;
+    }
+    .pomo-stat-label {
+      font-size: 10px;
+      color: #5a5a7a;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    /* Pomodoro blocking note */
+    .pomo-note {
+      background: #16161f;
+      border: 1px solid #2a1f3d;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #8060c0;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .pomo-note.active {
+      border-color: #4c2f80;
+      background: #1a1228;
+      color: #b090e0;
+    }
+
+    /* Duration selector */
+    .pomo-durations {
+      display: flex;
+      gap: 6px;
+    }
+    .dur-btn {
+      flex: 1;
+      padding: 6px 0;
+      background: #16161f;
+      border: 1px solid #232333;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #5a5a7a;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .dur-btn.selected {
+      background: #1e1233;
+      border-color: #5c3aed;
+      color: #a78bfa;
+    }
+    .dur-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Footer ── */
     .footer {
       text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      opacity: 0.7;
-    }
-
-    .platform-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 8px;
-      vertical-align: middle;
+      padding-top: 12px;
+      font-size: 11px;
+      color: #3a3a5a;
+      letter-spacing: 0.3px;
     }
   </style>
 </head>
 <body>
+
   <div class="header">
-    <h1>🚫 ShortBlocker</h1>
-    <p>YouTube Shorts ve Instagram Reels'i engelle</p>
-  </div>
-
-  <div class="settings-section">
-    <h3>YouTube Ayarları</h3>
-    <div class="setting-item">
-      <span class="setting-label">
-        <span class="platform-icon">📺</span>
-        Shorts sayfalarını engelle
-      </span>
-      <div class="toggle-switch" id="blockYouTubeShorts"></div>
-    </div>
-    <div class="setting-item">
-      <span class="setting-label">
-        <span class="platform-icon">🔘</span>
-        Shorts butonlarını kaldır
-      </span>
-      <div class="toggle-switch" id="removeShortsButtons"></div>
+    <div class="header-inner">
+      <div class="logo">🚫</div>
+      <div class="header-text">
+        <h1>ShortBlocker</h1>
+        <p>Shorts ve Reels engelleyici</p>
+      </div>
     </div>
   </div>
 
-  <div class="settings-section">
-    <h3>Instagram Ayarları</h3>
-    <div class="setting-item">
-      <span class="setting-label">
-        <span class="platform-icon">📱</span>
-        Reels sayfalarını engelle
-      </span>
-      <div class="toggle-switch" id="blockInstagramReels"></div>
-    </div>
-    <div class="setting-item">
-      <span class="setting-label">
-        <span class="platform-icon">🔘</span>
-        Reels butonlarını kaldır
-      </span>
-      <div class="toggle-switch" id="removeReelsButtons"></div>
-    </div>
+  <!-- Tab navigation -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="settings">⚙️ Ayarlar</button>
+    <button class="tab-btn" data-tab="pomodoro">🍅 Pomodoro</button>
   </div>
 
-  <div class="status" id="status">
-    Ayarlar yükleniyor...
-  </div>
+  <!-- ═══ SETTINGS TAB ═══ -->
+  <div class="tab-panel active" id="tab-settings">
 
-  <div class="footer">
-    ShortBlocker v1.0.0
-  </div>
+    <!-- YouTube -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yt">
+          <svg viewBox="0 0 24 24" fill="#ff3030" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23 7s-.3-1.9-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.1 3 12 3 12 3s-4.1 0-6.8.2c-.6.1-1.9.1-3 1.3C1.3 5.3 1 7 1 7S.7 9.1.7 11.2v2c0 2 .3 4.1.3 4.1s.3 1.9 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.3 21.4 12 21.4 12 21.4s4.1 0 6.8-.3c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.7 1.2-2.7s.3-2.1.3-4.1v-2C23.3 9.1 23 7 23 7z"/>
+            <polygon fill="#fff" points="9.7,15.5 9.7,8.5 16,12"/>
+          </svg>
+        </div>
+        <span class="card-title">YouTube</span>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label"><span class="label-dot"></span>Shorts sayfalarını engelle</span>
+        <div class="toggle-switch" id="blockYouTubeShorts"></div>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label"><span class="label-dot"></span>Shorts butonlarını kaldır</span>
+        <div class="toggle-switch" id="removeShortsButtons"></div>
+      </div>
+    </div>
+
+    <!-- Instagram -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ig">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="6" stroke="#d664ff" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="4" stroke="#d664ff" stroke-width="1.8"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#d664ff"/>
+          </svg>
+        </div>
+        <span class="card-title">Instagram</span>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label"><span class="label-dot"></span>Reels sayfalarını engelle</span>
+        <div class="toggle-switch" id="blockInstagramReels"></div>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label"><span class="label-dot"></span>Reels butonlarını kaldır</span>
+        <div class="toggle-switch" id="removeReelsButtons"></div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="status">Ayarlar yükleniyor...</span>
+    </div>
+
+  </div><!-- /tab-settings -->
+
+  <!-- ═══ POMODORO TAB ═══ -->
+  <div class="tab-panel" id="tab-pomodoro">
+
+    <p class="pomo-phase-label" id="pomoPhaseLabel">ÇALIŞMA</p>
+
+    <!-- Ring -->
+    <div class="pomo-ring-wrap" id="pomoRingWrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle id="pomoRingBg" cx="80" cy="80" r="68"
+          fill="none" stroke-width="8"/>
+        <circle id="pomoRingFg" cx="80" cy="80" r="68"
+          fill="none" stroke-width="8"
+          stroke-dasharray="427.26" stroke-dashoffset="0"/>
+      </svg>
+      <div class="pomo-time-display">
+        <div class="pomo-time" id="pomoTime">25:00</div>
+        <div class="pomo-time-sub" id="pomoTimeSub">odaklan</div>
+      </div>
+    </div>
+
+    <!-- Duration selector -->
+    <div class="pomo-durations">
+      <button class="dur-btn selected" data-minutes="25">25 dk</button>
+      <button class="dur-btn" data-minutes="45">45 dk</button>
+      <button class="dur-btn" data-minutes="60">60 dk</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="pomo-controls">
+      <button class="pomo-btn primary" id="pomoStartBtn">▶ Başlat</button>
+      <button class="pomo-btn secondary" id="pomoResetBtn">↺ Sıfırla</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="pomo-stats">
+      <div class="pomo-stat">
+        <div class="pomo-stat-val" id="pomoSessions">0</div>
+        <div class="pomo-stat-label">Oturum</div>
+      </div>
+      <div class="pomo-stat">
+        <div class="pomo-stat-val" id="pomoFocusMin">0</div>
+        <div class="pomo-stat-label">Odak (dk)</div>
+      </div>
+      <div class="pomo-stat">
+        <div class="pomo-stat-val" id="pomoStreak">0</div>
+        <div class="pomo-stat-label">Seri</div>
+      </div>
+    </div>
+
+    <!-- Info note -->
+    <div class="pomo-note" id="pomoNote">
+      Pomodoro başlatıldığında tüm engelleme özellikleri otomatik aktif olur.
+    </div>
+
+  </div><!-- /tab-pomodoro -->
+
+  <div class="footer">ShortBlocker v1.0.0</div>
 
   <script src="popup.js"></script>
 </body>
